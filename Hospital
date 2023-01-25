@@ -10,7 +10,7 @@ Id_Personal int,
 Id_Ambulancia int
 );
 
-create table Grilla_Hospital (
+create table Consultorio (
 Id_Consultorio int auto_increment not null primary key,
 Nombre_Consultorio varchar(100),
 Domicilio_Consultorio varchar(100),
@@ -20,13 +20,13 @@ Mail_Consultorio varchar(100)
 
 create table Proveedor (
 Id_Proveedor int auto_increment not null primary key,
-Cuil_Proveedor int,
+Cuit_Proveedor int,
 Nombre_Proveedor varchar(100),
 Telefono_Proveedor int
 );
 
 create table Factura (
-Cuil_Proveedor int auto_increment not null primary key,
+Cuit_Proveedor int auto_increment not null primary key,
 Id_Tipo_Factura int,
 Sucursal varchar(100),
 Detalle_Factura varchar(100),
@@ -44,21 +44,19 @@ Id_Paciente int auto_increment not null primary key,
 Nombre_Paciente varchar(100),
 Apellido_Paciente varchar(100),
 Telefono_Paciente int,
-Obra_Social varchar(100) not null,
+Id_Obra_Social int not null,
 Mail_Paciente varchar(100),
 Fecha_Nacimiento_Paciente date
 );
 
-create table Sala(
-Id_Sala int auto_increment not null primary key,
-Id_Area int,
-Num_Piso int
+create table Obra_Social (
+Id_Obra_Social int auto_increment not null primary key,
+Tipo_Obra_Social varchar (100)
 );
 
-create table Area (
-Id_Area int auto_increment not null primary key,
-Id_Doctor int,
-Sector varchar(100)
+create table Sala(
+Id_Sala int auto_increment not null primary key,
+Num_Piso int
 );
 
 create table Doctor (
@@ -82,22 +80,22 @@ Domicilio_Personal varchar(100),
 Mail_Personal varchar(100)
 );
 
-create table Recepcionistas (
+create table Recepcionista (
 Legajo int auto_increment not null primary key,
-Id_Recepcionistas int,
+Id_Recepcionista int,
 Rol_Designado varchar(100)
 );
 
 create table Reserva (
 Id_Reserva int auto_increment not null primary key,
-Id_Recepcionistas int,
-Cod_Tipo_Reserva int,
+Id_Recepcionista int,
+Id_Tipo_Reserva int,
 Hora_Reserva datetime,
 Fecha_Reserva date
 );
 
 create table Tipo_Reserva(
-Cod_Tipo_Reserva int auto_increment not null primary key,
+Id_Tipo_Reserva int auto_increment not null primary key,
 Descripcion_Reserva varchar(100),
 Pago_Reserva decimal
 );
@@ -107,3 +105,5 @@ Id_Ambulancia int auto_increment not null primary key,
 Modelo varchar(100),
 Patente varchar(100)
 );
+
+
