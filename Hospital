@@ -1,16 +1,23 @@
+create schema hospital;
 use hospital;
 
-create table Hospital (
-Id_Hospital int auto_increment not null primary key,
-Id_Consultorio int,
-Id_Proveedor int,
-Id_Paciente int,
-Id_Sala int,
-Id_Personal int,
-Id_Ambulancia int
-);
+DROP TABLE IF EXISTS consultorio;
+DROP TABLE IF EXISTS proveedor;
+DROP TABLE IF EXISTS factura;
+DROP TABLE IF EXISTS proveedor;
+DROP TABLE IF EXISTS obra_Social;
+DROP TABLE IF EXISTS paciente;
+DROP TABLE IF EXISTS personal;
+DROP TABLE IF EXISTS tipo_matricula;
+DROP TABLE IF EXISTS especialidad;
+DROP TABLE IF EXISTS doctor;
+DROP TABLE IF EXISTS recepcionista;
+DROP TABLE IF EXISTS tipo_Reserva;
+DROP TABLE IF EXISTS reserva;
+DROP TABLE IF EXISTS ambulancia;
+DROP TABLE IF EXISTS hospital;
 
-create table Consultorio (
+create table consultorio(
 Id_Consultorio int auto_increment not null primary key,
 Nombre_Consultorio varchar(100),
 Domicilio_Consultorio varchar(100),
@@ -18,61 +25,48 @@ Telefono_Consultorio int,
 Mail_Consultorio varchar(100)
 );
 
-create table Proveedor (
-Id_Proveedor int auto_increment not null primary key,
-Cuit_Proveedor int,
-Nombre_Proveedor varchar(100),
-Telefono_Proveedor int
-);
-
-create table Factura (
-Cuit_Proveedor int auto_increment not null primary key,
-Id_Tipo_Factura int,
-Sucursal varchar(100),
-Detalle_Factura varchar(100),
-Importe_Factura decimal,
-Fecha_Factura date
-);
-
-create table Tipo_Factura(
+create table tipo_Factura(
 Id_Tipo_Factura int auto_increment not null primary key,
 Tipo_Factura varchar(100)
 );
 
-create table Paciente (
-Id_Paciente int auto_increment not null primary key,
-Nombre_Paciente varchar(100),
-Apellido_Paciente varchar(100),
-Telefono_Paciente int,
-Id_Obra_Social int not null,
-Mail_Paciente varchar(100),
-Fecha_Nacimiento_Paciente date
+create table factura(
+Id_Factura int auto_increment not null primary key,
+Id_Tipo_Factura int,
+Sucursal varchar(100),
+Detalle_Factura varchar(100),
+Importe_Factura decimal,
+Fecha_Factura date,
+foreign key (Id_Tipo_Factura) references tipo_Factura(Id_Tipo_Factura)
 );
 
-create table Obra_Social (
+create table proveedor(
+Id_Proveedor int auto_increment not null primary key,
+Id_Factura int,
+Cuit_Proveedor int,
+Nombre_Proveedor varchar(100),
+Telefono_Proveedor int,
+foreign key (Id_Factura) references factura(Id_Factura)
+);
+
+create table obra_Social (
 Id_Obra_Social int auto_increment not null primary key,
 Tipo_Obra_Social varchar (100)
 );
 
-create table Sala(
-Id_Sala int auto_increment not null primary key,
-Num_Piso int
+create table paciente (
+Id_Paciente int auto_increment not null primary key,
+Nombre_Paciente varchar(100),
+Apellido_Paciente varchar(100),
+Telefono_Paciente int,
+Id_Obra_Social int,
+Mail_Paciente varchar(100),
+Fecha_Nacimiento_Paciente date,
+foreign key  (Id_Obra_Social) references obra_Social(Id_Obra_Social)
 );
 
-create table Doctor (
-Id_Doctor int auto_increment not null primary key,
-Legajo int,
-Matricula int
-);
-
-create table Titulo_Profesional (
-Matricula int not null primary key,
-Especialidad varchar(100)
-);
-
-create table Personal (
-Id_Personal	int auto_increment not null primary key,
-Legajo int,
+create table personal (
+Legajo 	int not null primary key,
 Nombre_Personal varchar(100),
 Apellido_Personal varchar(100),
 Telefono_Personal int,
@@ -80,30 +74,213 @@ Domicilio_Personal varchar(100),
 Mail_Personal varchar(100)
 );
 
-create table Recepcionista (
-Legajo int auto_increment not null primary key,
-Id_Recepcionista int,
-Rol_Designado varchar(100)
+create table tipo_matricula (
+Id_Tipo_Matricula int auto_increment not null primary key,
+Tipo_Matricula varchar (100)
 );
 
-create table Reserva (
-Id_Reserva int auto_increment not null primary key,
-Id_Recepcionista int,
-Id_Tipo_Reserva int,
-Hora_Reserva datetime,
-Fecha_Reserva date
+create table especialidad (
+Id_Especialidad int auto_increment not null primary key,
+Especialidad varchar (100)
 );
 
-create table Tipo_Reserva(
+create table doctor(
+Id_Doctor int  auto_increment not null primary key,
+Legajo int ,
+Id_Tipo_Matricula int,
+Matricula int,
+Id_Especialidad int,
+foreign key (Legajo) references personal (Legajo),
+foreign key (Id_Tipo_Matricula) references tipo_matricula (Id_Tipo_Matricula),
+foreign key (Id_Especialidad) references especialidad (Id_Especialidad)
+);
+
+create table recepcionista (
+Id_Recepcionista int auto_increment not null primary key,
+Legajo int,
+Rol_Designado varchar(100),
+foreign key (Legajo) references personal(Legajo)
+);
+
+create table tipo_Reserva(
 Id_Tipo_Reserva int auto_increment not null primary key,
-Descripcion_Reserva varchar(100),
-Pago_Reserva decimal
+Descripcion_Reserva varchar(100)
 );
 
-create table Ambulancia (
-Id_Ambulancia int auto_increment not null primary key,
-Modelo varchar(100),
-Patente varchar(100)
+create table reserva (
+Id_Reserva int auto_increment not null primary key,
+Id_Tipo_Reserva int,
+Id_Recepcionista int,
+Hora_Reserva datetime,
+Pago_Reserva decimal,
+foreign key (Id_Recepcionista) references recepcionista (Id_Recepcionista),
+foreign key (Id_Tipo_Reserva) references Tipo_Reserva(Id_Tipo_Reserva)
 );
 
+create table ambulancia (
+    Id_Ambulancia INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    Modelo VARCHAR(100),
+    Patente VARCHAR(100)
+);
+
+
+
+
+
+
+
+create table hospital(
+Id_Hospital int auto_increment not null primary key,
+Id_Consultorio int,
+Id_Proveedor int,
+Id_Paciente int,
+Id_Doctor int,
+Id_Recepcionista int,
+Id_Ambulancia int,
+foreign key (Id_Consultorio) references consultorio(Id_Consultorio),
+foreign key (Id_Proveedor) references proveedor(Id_Proveedor),
+foreign key (Id_Paciente) references paciente(Id_Paciente),
+foreign key (Id_Doctor) references doctor(Id_Doctor),
+foreign key (Id_Recepcionista) references recepcionista(Id_Recepcionista),
+foreign key (Id_Ambulancia) references ambulancia(Id_Ambulancia)
+);
+
+
+
+/*VAMOS A INSERTAR DATOS DE LOS CONSULTORIOS*/
+insert into consultorio(Nombre_Consultorio, Domicilio_Consultorio, Telefono_consultorio, Mail_Consultorio) values
+("Hospital Roca", "Avenida Montevideo 168",1122556688,"hospRoca@Outlook.com"),
+("Hospital Flores", "Avenida Los Pasos 115",35489967,"hospFlores@Outlook.com"),
+("Hospital Cuidados Graves", "Avenida Hidalgo 487",1145779368,"hospCuidadosGraves@Outlook.com"),
+("Hospital Jose San Martin", "Triunbirato 500",1144751986,"hospJoseSanMartin@Outlook.com"),
+("Hospital Duran", "Vera 100",1144778844,"hospDuran@Outlook.com");
+
+
+/*VAMOS A INSERTAR DATOS DEL TIPO DE FACTURA*/
+insert into tipo_Factura (Tipo_Factura)values
+("Factura C"),
+("Factura A"),
+("Factura B");
+
+/*VAMOS A INGRESAR LOS DATOS DE LA FACTURA*/
+insert into  factura (Id_Tipo_Factura,Sucursal, Detalle_Factura, Importe_Factura, Fecha_Factura) values
+(1,"Lomas", "Atencion Kinesiologo", 10000, "2023-02-06"),
+(2,"Paternal", "Atencion Odontologia", 30000, "2023-03-22"),
+(3,"Avellaneda", "Traslado Ambulancia", 50000, "2023-04-30"),
+(1,"Puerto Madero", "Traslado Ambulancia", 50000, "2023-11-22"),
+(2,"Avellaneda", "Atencion Odontologica ", 80000, "2023-07-11");
+
+
+/*VAMOS A INSERTAR LOS DATOS DEL PROVEEDOR*/
+insert into proveedor (Id_Factura, Cuit_Proveedor,Nombre_Proveedor, Telefono_Proveedor) values 
+(1,20-33445566-2 ,"Adrian Gonzales", 1135684711),
+(2,22-33551578-2 ,"Alan Varela", 1544661100),
+(3,28-33554477-2, "Nicolas Orsini", 1589898966),
+(4,30-33464492-2, "Oscar Romero", 1122337788),
+(5,30-54666656-1, "Dario Benedetto", 1165889925);
+
+
+/*VAMOS A INSERTAR DATOS DE LA OBRA SOCIAL*/
+insert into obra_Social (Tipo_Obra_Social) values
+("PARTICULAR"),
+("OSDE"),
+("PAMI"),
+("GALENO"),
+("DOSUBA");
+
+
+
+/* VAMOS A INSERTAR PACIENTES*/
+
+insert into paciente (Nombre_Paciente, Apellido_Paciente, Telefono_Paciente, Id_Obra_Social, Mail_Paciente, Fecha_Nacimiento_Paciente) values 
+("Sebastian", "Meister", 1144668899, 1, "Sebastian@hotmail.com", "1989-05-01"),
+("Fabian", "De la Madrid", 115512345,2, "Fabian@hotmail.com", "1870-06-02"),
+("German", "Garmendia", 1165887700,3, "Sebastian@hotmail.com", "1877-07-03"),
+("Natalia", "Corro", 1100002211,4, "Fernanda@hotmail.com", "1866-08-04"),
+("Lucas", "Vasconi", 1545779012,5, "Lucas@hotmail.com", "1997-11-20");
+
+/*VAMOS A INSERTAR DATOS PERSONALES*/
+insert into personal (Legajo, Nombre_Personal, Apellido_Personal, Telefono_Personal, Domicilio_Personal, Mail_Personal) values 
+(210211, "Agustin", "Lopez", 1164656465, "Av Corrientes 1154", "Agustin@gmail.com"),
+(16554, "Fermin", "Alonso", 1165489688, "Combatientes 11", "Fermin@gmail.com"),
+(211123, "Ignacio", "Liz", 1534887799, "Av Cordoba 1654", "Ignacio@gmail.com"),
+(225546, "Alberto", "Osman", 1155554326, "Los toros 1144", "Alberto@gmail.com"),
+(245689, "Jose", "Lito", 1133665566, "Anchorena 66", "Jose@gmail.com"),
+(154689, "Lucas", "Perez", 1145889672, "Berutti 10", "LucaS@gmail.com"),
+(249865, "Ramiro", "Fernandez", 1133102546, "Uriburu 1110", "Ramiro@gmail.com"),
+(215546, "Natalia", "Franchini", 1156874963, "Cordoba 110", "Natalia@gmail.com"),
+(265893, "Alejandra", "Franco", 1187956482, "Honduras 100", "Alejandra@gmail.com"),
+(214589, "Karina", "Gil", 1177589685, "Pasteur 200", "Karina@gmail.com")
+;
+
+/*VAMOS A INSERTAR DATOS DE TIPO MATRICULA  */
+insert into tipo_matricula (Tipo_Matricula) values
+("Nacional"),
+("Provincial");
+
+/*VAMOS A INSERTAR DATOS DE LA ESPECIALIDAD*/
+insert into especialidad (especialidad) values 
+("Traumatologia"),
+("Kinesiologia"),
+("Odontologia"),
+("Oftalmologia"),
+("Urologia");
+
+
+
+/*VAMOS A INSERTAR DATOS DEL DOCTOR*/
+insert into doctor (Legajo, Id_Tipo_Matricula, Matricula, Id_Especialidad) values 
+(210211, 1, 4568,1),
+(16554, 2, 5544,2),
+(211123, 1, 4896,3),
+(225546,2, 4892,4),
+(245689,  1, 4875,5);
+
+
+/*VAMOS A INSERTAR DATOS DE LOS/AS RECEPCIONISTAS*/
+
+insert into recepcionista (Legajo,Rol_Designado) values
+(154689,"Atencion al publico"),
+(249865,"Archivo"),
+(215546 ,"Calendario Medico"),
+(265893, "Liempieza"),
+(214589, "Jefa de personal");
+
+
+/*VAMOS A INSERTAR DATOS DEL TIPO RESERVA*/
+insert into tipo_reserva (Descripcion_Reserva) values 
+("Turno programado para Operacion"),
+("Turno programado por urgencia"),
+("Turno programado por ingreso a un nuevo trabajo"),
+("Turno programado por examen medico"),
+("Turno programado por control")
+;
+
+
+/*VAMOS A INSERTAR DATOS DE LA RESERVA*/
+insert into reserva (Id_Tipo_Reserva, Id_Recepcionista, Hora_Reserva, Pago_Reserva) values 
+(1,1,"2023-01-20 11:00", 1564.00),
+(2,2,"2023-02-20 12:00", 1100.00),
+(3,3,"2023-03-20 15:00", 00.00),
+(4,4,"2023-04-20 17:00", 1500.00),
+(5,5,"2023-05-20 10:00", 2000.00)
+;
+
+/*VAMOS A INSERTAR LOS DATOS DE LA TABLA AMBULANCIA*/
+insert into ambulancia (Modelo, Patente) values 
+("PEUGEOT","ACD546"),
+("MERCEDES","JFW879"),
+("RANGER","ASD578"),
+("FORD","KOL134"),
+("PALIO","ACK551")
+;
+
+
+/*VAMOS A INGRESAR LOS VALORES DE LA TABLA HOSPITAL*/
+insert into hospital(Id_Consultorio, Id_Proveedor,Id_Paciente, Id_Doctor,Id_Recepcionista, Id_Ambulancia) values 
+(1,1,1,1,1,1),
+(2,2,2,2,2,2),
+(3,3,3,3,3,3),
+(4,4,4,4,4,4),
+(5,5,5,5,5,5);
 
