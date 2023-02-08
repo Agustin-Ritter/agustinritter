@@ -284,3 +284,93 @@ insert into hospital(Id_Consultorio, Id_Proveedor,Id_Paciente, Id_Doctor,Id_Rece
 (4,4,4,4,4,4),
 (5,5,5,5,5,5);
 
+
+
+
+/*CREAMOS LAS TABLAS VISTA*/
+/*TABLA CON LOS DATOS DE LAS AMBULANCIAS DISPONIBLES*/
+create or replace view ambulancia_vista  as
+select Modelo, Patente
+from ambulancia
+order by Patente desc;
+
+select * from ambulancia_vista;
+
+
+/*TABLA CON LA LISTA DEL PERSONAL DISPONIBLE*/
+create or replace view personal_vista as
+select Legajo, Apellido_Personal, Nombre_Personal
+from personal
+order by Legajo asc;
+
+select * from personal_vista;
+
+/*TABLA CON LA LISTA DE PROVEEDORES*/
+create or replace view proveedor_vista as
+select Id_Proveedor, Nombre_Proveedor, Cuit_Proveedor
+from proveedor
+order by Nombre_Proveedor asc;
+
+select * from proveedor_vista;
+
+/*TABLA DE LAS OBRAS SOCIALES CARGADAS*/
+create or replace view obra_social_cargadas as
+select Id_Obra_Social, Tipo_Obra_Social 
+from obra_social
+order by Id_Obra_Social;
+
+select * from  obra_social;
+
+
+/*TABLA DE LE LAS ACTIVIDAD DE LOS RECEPCIONSITAS*/
+create or replace view recepcionista_vista as
+select Legajo, Rol_Designado
+from recepcionista
+order by Legajo asc;
+
+select * from recepcionista_vista;
+
+/*TABLA DE LAS LISTAS DE LOS RECEPCIONISTAS*/
+create or replace view datos_recepcionistas as
+(select p.Legajo, p.Nombre_Personal, p.Apellido_Personal, r.Rol_Designado
+from personal as p inner join recepcionista as r
+on p.Legajo = r.Legajo
+);
+select * from datos_recepcionistas;
+
+
+/*TABLA DE LOS DOCTORES*/
+create or replace view datos_doctor as
+(select d.Id_Doctor, d.Legajo, d.Matricula, e.Tipo_Matricula
+from doctor as d  inner join tipo_matricula as e
+on d.Id_Tipo_Matricula = e.Id_Tipo_Matricula
+);
+
+select * from datos_doctor;
+
+/*TABLA DE LOS DATOS DEL HOSPITAL*/
+select * from consultorio;
+create or replace view datos_hospital as
+(select h.Id_Hospital, c.Nombre_Consultorio, c.Domicilio_Consultorio, c.Telefono_Consultorio, c.Mail_Consultorio
+from hospital as h inner join consultorio as c
+on h.Id_Consultorio = c.Id_Consultorio
+);
+select * from datos_hospital;
+
+/*TABLA DE DATOS DE FACTURA*/
+create or replace view datos_factura as
+(select f.Id_Factura, f.Sucursal, f.Detalle_Factura, f.Importe_Factura, f.Fecha_Factura, t.Tipo_Factura
+from factura as f inner join tipo_factura as t
+on f.Id_Tipo_Factura = t.Id_Tipo_Factura
+);
+select * from datos_factura;
+
+/*TABLA DE DATOS DE LA RESERVA*/
+create or replace view turno_reserva as
+(select 
+r.Id_Reserva, r.Hora_Reserva, r.Pago_Reserva,
+t.Descripcion_Reserva
+from reserva as r inner join tipo_reserva as t 
+on r.Id_Tipo_Reserva = t.Id_Tipo_Reserva
+);
+select * from turno_reserva;
