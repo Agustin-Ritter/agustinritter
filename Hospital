@@ -381,3 +381,56 @@ END
 /*FUNCION DONDE DAMOS UNA BIENVENIDA A LOS PACIENTES */
 select Bienvenida(Nombre_Paciente, Apellido_Paciente,Mail_Paciente) as Bienvenida FROM paciente;
 
+
+
+/*STORED PROCEDURES para ordenar columnas
+Agarramos la tabla domicilio y/o nombre y lo pasamos como paramentro
+despues ponemos Ascendente o Descendente dependiendo lo que queramos y lo damos como parametro*/
+DELIMITER //
+CREATE PROCEDURE `ordenar_columnas`(in campo varchar(100), orden varchar(100))
+BEGIN
+
+			if (campo = "nombre") then
+				 if (orden = "Ascendente") then
+					select Nombre_Consultorio from hospital.consultorio order by Nombre_Consultorio asc;
+					else
+					select Nombre_Consultorio from hospital.consultorio order by Nombre_Consultorio desc;
+				
+                end if;
+			end if;
+			if (campo = "domicilio") then 
+				 if (orden="Ascendente") then
+					select Domicilio_Consultorio from hospital.consultorio  order by Domicilio_Consultorio asc;
+				else 
+					select Domicilio_Consultorio from hospital.consultorio order by Domicilio_Consultorio desc;
+					
+                end if;
+			end if;
+END
+//
+
+/*Aca llamamos a la columna nombre con orden Ascendente*/
+CALL ordenar_columnas("nombre", "Ascendente");
+/*Aca llamamos a la columna nombre con orden Descendente*/
+CALL ordenar_columnas("nombre", "Descendente");
+/*Aca llamamos a la columna domicilio con orden Ascendente*/
+CALL ordenar_columnas("domicilio", "Ascendente");
+/*Aca llamamos a la columna domicilio con orden Descendente*/
+call ordenar_columnas("domicilio", "Descendente");
+
+
+
+/*Stored Procedures Para ingresar datos en la  tabla ambulancia*/
+DELIMITER //
+CREATE PROCEDURE `Ingresar_Ambulancia`(
+in modelo varchar(100), 
+in patente varchar(100))
+BEGIN
+
+        insert into ambulancia (Modelo, Patente) value (modelo, patente);
+        
+END
+//
+/*En este caso vamos a colocar los datos que queremos ingresar*/
+CALL Ingresar_Ambulancia("CLIO","LKO879");
+SELECT * FROM AMBULANCIA
