@@ -1,4 +1,6 @@
-create schema hospital;
+/*Crearemos la base de datos Hospital*/
+DROP DATABASE IF EXISTS `hospital`;
+CREATE DATABASE IF NOT EXISTS `hospital`;
 use hospital;
 
 DROP TABLE IF EXISTS consultorio;
@@ -297,7 +299,6 @@ select Modelo, Patente
 from ambulancia
 order by Patente desc;
 
-select * from ambulancia_vista;
 
 
 /*TABLA CON LA LISTA DEL PERSONAL DISPONIBLE*/
@@ -306,7 +307,6 @@ select Legajo, Apellido_Personal, Nombre_Personal
 from personal
 order by Legajo asc;
 
-select * from personal_vista;
 
 /*TABLA CON LA LISTA DE PROVEEDORES*/
 create or replace view proveedor_vista as
@@ -314,7 +314,6 @@ select Id_Proveedor, Nombre_Proveedor, Cuit_Proveedor
 from proveedor
 order by Nombre_Proveedor asc;
 
-select * from proveedor_vista;
 
 /*TABLA DE LAS OBRAS SOCIALES CARGADAS*/
 create or replace view obra_social_cargadas as
@@ -322,7 +321,6 @@ select Id_Obra_Social, Tipo_Obra_Social
 from obra_social
 order by Id_Obra_Social;
 
-select * from  obra_social;
 
 
 /*TABLA DE LE LAS ACTIVIDAD DE LOS RECEPCIONSITAS*/
@@ -331,7 +329,6 @@ select Legajo, Rol_Designado
 from recepcionista
 order by Legajo asc;
 
-select * from recepcionista_vista;
 
 
 /*TABLA DE LAS LISTAS DE LOS RECEPCIONISTAS*/
@@ -340,7 +337,6 @@ create or replace view datos_recepcionistas as
 from personal as p inner join recepcionista as r
 on p.Legajo = r.Legajo
 );
-select * from datos_recepcionistas;
 
 
 /*TABLA DE LOS DATOS DEL DOCTOR*/
@@ -350,7 +346,6 @@ from doctor as d  inner join tipo_matricula as e
 on d.Id_Tipo_Matricula = e.Id_Tipo_Matricula
 );
 
-select * from datos_doctor;
 
 /****************************************************************************************************/
 /*CREAMOS LAS FUNCIONES*/
@@ -441,7 +436,6 @@ END
 //
 /*En este caso vamos a colocar los datos que queremos ingresar*/
 call Ingresar_Ambulancia("CLIO","LKO879");
-SELECT * FROM AMBULANCIA
 
 
 /***********************************************************************************/
@@ -480,11 +474,14 @@ end
 insert into personal (Legajo, Nombre_Personal, Apellido_Personal, Telefono_Personal, Domicilio_Personal, Mail_Personal) values 
 (111222, "German","Lewis",1144446666 , "SanBlas 2279", "GLewis@Gmail.com");
 
-/*Revisamos la tabla personal a ver si se agrego el nuevo registro*/
+/*Aca podemos revisar la tabla personal a ver si se agrego el nuevo registro
 select * from personal;
+*/
 
-/*Ahora revisamos nuestra nueva tabla Trigger*/
+/*Ahora, si queremos, podemos revisamos nuestra nueva tabla Trigger
 select * from trigger_personal;
+*/
+
 
 /*Ahora si creamos un trigger pero para una ELIMINACION*/
 delimiter //
@@ -499,12 +496,13 @@ end
 /*Procedemos a eliminar el registro anteriormente creado*/
 delete from personal where Legajo= 111222;
 
-/*Ahora corroboramos que la eliminacion se realizara en la tabla personal*/
+/*Ahora, si queremos, corroboramos que la eliminacion se realizara en la tabla personal
 select * from personal;
+*/
 
-/*Ahora hacemos lo mismo en la tabla Trigger*/
+/*Ahora, si queremos, hacemos lo mismo en la tabla Trigger
 select * from trigger_personal;
-
+*/
 
 
 
@@ -541,12 +539,13 @@ end
 insert into paciente (Nombre_Paciente, Apellido_Paciente, Telefono_Paciente, Id_Obra_Social, Mail_Paciente,Fecha_Nacimiento_Paciente) values 
 ("Martin","Palermo",1111111111,1,"Palermo@gmail.com", "1911-01-01");
 
-/*Revisamos la tabla Paciente a ver si se agrego el nuevo registro*/
+/*Para corroborar si se agrego un nuevo registro en la tabla paciente
 select * from paciente;
+*/
 
-/*Ahora revisamos nuestra nueva tabla Trigger*/
+/*Ahora, si queremos, revisamos nuestra nueva tabla Trigger
 select * from trigger_paciente;
-
+*/
 
 
 /*Ahora si creamos un trigger pero para una ELIMINACION*/
@@ -564,8 +563,10 @@ end
 /*Procedemos a eliminar el registro anteriormente creado*/
 delete from paciente where Id_Paciente = 6;
 
-/*Ahora corroboramos que la eliminacion se realizara en la tabla personal*/
+/*Ahora, si queremos, corroboramos que la eliminacion se realizara en la tabla personal
 select * from paciente;
+*/
 
-/*Ahora hacemos lo mismo en la tabla Trigger*/
+/*Ahora, si queremos, hacemos lo mismo en la tabla Trigger
 select * from trigger_paciente;
+*/
