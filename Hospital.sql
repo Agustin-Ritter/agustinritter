@@ -540,13 +540,31 @@ end
 /*Procedemos a eliminar el registro anteriormente creado*/
 delete from paciente where Id_Paciente = 6;
 
+/*//////////////////////////////////////////////////////////////////////*/
+
+
+/*VAMOS A CREAR 2 USUARIOS NUEVOS */
+/*Primero eliminamos a estos nuevos usuarios para corroborar que no tenemos otros usuarios creados con el mismo nombre*/
+drop user if exists "Lectura";
+Drop user if exists "Modificacion";
+/*Ahora si, creamos nuestros nuevos dos usuarios*/
+create user if not exists "Lectura" identified by "lectura";
+create user if not exists "Modificacion" identified by "modificacion";
+
+/*El primero tendra permisos de LECTURA*/
+grant select on * to "Lectura";
+
+/*El segundo tendra permisos de LECTURA, INSERCION Y MODIFICACION*/
+grant select, insert, update on * to "Modificacion";
+
+/*Ninguno va a poder ELIMINAR*/
 
 
 
 
 
-/************************************************************************************************/
 
+/*//////////////////////////////////////////////////////////////////////////*/
 /*VAMOS A HACER SUBLENGUAJE DLC*/
 
 /*TABLA 1*/
