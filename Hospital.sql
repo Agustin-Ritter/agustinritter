@@ -629,6 +629,8 @@ savepoint lote_2;
 
 /*Ahora con esto vamos a eliminar el savepoint del lote 1*/
 release savepoint lote_1; 
+
+
 /*Ahora en caso de que queramos que no se impacte lo anterior, vamos a realizar un rollback*/
 rollback;
 /*Y UN COMMIT para que no guarde*/
