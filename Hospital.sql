@@ -474,14 +474,6 @@ end
 insert into personal (Legajo, Nombre_Personal, Apellido_Personal, Telefono_Personal, Domicilio_Personal, Mail_Personal) values 
 (111222, "German","Lewis",1144446666 , "SanBlas 2279", "GLewis@Gmail.com");
 
-/*Aca podemos revisar la tabla personal a ver si se agrego el nuevo registro
-select * from personal;
-*/
-
-/*Ahora, si queremos, podemos revisamos nuestra nueva tabla Trigger
-select * from trigger_personal;
-*/
-
 
 /*Ahora si creamos un trigger pero para una ELIMINACION*/
 delimiter //
@@ -496,13 +488,7 @@ end
 /*Procedemos a eliminar el registro anteriormente creado*/
 delete from personal where Legajo= 111222;
 
-/*Ahora, si queremos, corroboramos que la eliminacion se realizara en la tabla personal
-select * from personal;
-*/
 
-/*Ahora, si queremos, hacemos lo mismo en la tabla Trigger
-select * from trigger_personal;
-*/
 
 
 
@@ -539,13 +525,6 @@ end
 insert into paciente (Nombre_Paciente, Apellido_Paciente, Telefono_Paciente, Id_Obra_Social, Mail_Paciente,Fecha_Nacimiento_Paciente) values 
 ("Martin","Palermo",1111111111,1,"Palermo@gmail.com", "1911-01-01");
 
-/*Para corroborar si se agrego un nuevo registro en la tabla paciente
-select * from paciente;
-*/
-
-/*Ahora, si queremos, revisamos nuestra nueva tabla Trigger
-select * from trigger_paciente;
-*/
 
 
 /*Ahora si creamos un trigger pero para una ELIMINACION*/
@@ -558,35 +537,81 @@ begin
 end
 //
 
-
-
 /*Procedemos a eliminar el registro anteriormente creado*/
 delete from paciente where Id_Paciente = 6;
 
-/*Ahora, si queremos, corroboramos que la eliminacion se realizara en la tabla personal
-select * from paciente;
-*/
-
-/*Ahora, si queremos, hacemos lo mismo en la tabla Trigger
-select * from trigger_paciente;
-*/
 
 
 
 
-/*VAMOS A CREAR 2 USUARIOS NUEVOS */
-/*Primero eliminamos a estos nuevos usuarios para corroborar que no tenemos otros usuarios creados con el mismo nombre*/
-drop user if exists "Lectura";
-Drop user if exists "Modificacion";
-/*Ahora si, creamos nuestros nuevos dos usuarios*/
-create user if not exists "Lectura" identified by "lectura";
-create user if not exists "Modificacion" identified by "modificacion";
 
-/*El primero tendra permisos de LECTURA*/
-grant select on * to "Lectura";
+/************************************************************************************************/
 
-/*El segundo tendra permisos de LECTURA, INSERCION Y MODIFICACION*/
-grant select, insert, update on * to "Modificacion";
+/*VAMOS A HACER SUBLENGUAJE DLC*/
 
-/*Ninguno va a poder ELIMINAR*/
+/*TABLA 1*/
+select @@autocommit;
+set autocommit= 0;
 
+/*VAMOS A ELIMINAR LOS ULTIMOS REGISTROS DE LA TABLA CONSULTORIO*/
+start transaction;
+/* Deshabilitar verificación de llaves foráneas*/
+SET FOREIGN_KEY_CHECKS = 0;
+delete from consultorio where Id_Consultorio = 5;
+delete from consultorio where Id_Consultorio = 3;
+delete from consultorio where Id_Consultorio = 4;
+/*Rehabilitar verificación de llaves foráneas*/
+SET FOREIGN_KEY_CHECKS = 1;
+/*Ahora usamos el Rollback para revertir las eliminaciones que se hicieron anteriormente*/
+rollback;
+/*Ahora vamos a guardar los cambios de forma permanente, nuestra tabla va a quedar como en el comienzo*/
+commit;
+/*El tema de la des habilitación de la verificación de llaves foráneas lo tuve que hacer porque me aparecía el error:
+Error Code: 1451. Cannot delete or update a parent row: a foreign key constraint fails (`hospital`.`hospital`, CONSTRAINT `hospital_ibfk_1` FOREIGN KEY (`Id_Consultorio`) REFERENCES `consultorio` (`Id_Consultorio`))	0.000 sec
+y sin este paso no podía eliminar registros*/
+
+
+/*En caso que este mal lo anterior, realice una inserción de registros la cual se me permitía hacer sin ningún tipo de problema*/
+start transaction;
+/*Insertamos datos nuevos*/
+insert  into consultorio (Nombre_Consultorio, Domicilio_Consultorio, Telefono_Consultorio, Mail_Consultorio) values 
+("Hospital Prueba 1", "Siempreviva  100", "11111111", "prueba1@gmail.com");
+insert  into consultorio (Nombre_Consultorio, Domicilio_Consultorio, Telefono_Consultorio, Mail_Consultorio) values 
+("Hospital Infectados", "Bolivar 200", "1132222222", "Infectados@gmail.com");
+insert  into consultorio (Nombre_Consultorio, Domicilio_Consultorio, Telefono_Consultorio, Mail_Consultorio) values 
+("Hospital Santa Barbara", "Chile 1000", "1124558888", "SantaBarbara@gmail.com");
+/*Ahora hacemos un Rollback para revertir estas inserciones*/
+rollback;
+/*Y ahora hacemos un Commit para guardar los cambios, quedaría como en el comienzo*/
+commit;
+
+
+
+
+/*TABLA 2*/
+start transaction;
+insert into ambulancia (Modelo, Patente) values 
+("FORD","ACV111");
+insert into ambulancia (Modelo, Patente) values 
+("NISSAN","BCV114");
+insert into ambulancia (Modelo, Patente) values 
+("TOYOTA","AND129");
+insert into ambulancia (Modelo, Patente) values 
+("BMW","ADD111");
+savepoint lote_1;
+insert into ambulancia (Modelo, Patente) values 
+("KIA","ADA181");
+insert into ambulancia (Modelo, Patente) values 
+("MERCEDES","CJK455");
+insert into ambulancia (Modelo, Patente) values 
+("HYUNDAI","CVD456");
+insert into ambulancia (Modelo, Patente) values 
+("CITROEN","ABC123");
+savepoint lote_2;
+
+/*Ahora con esto vamos a eliminar el savepoint del lote 1*/
+release savepoint lote_1; 
+/*Ahora en caso de que queramos que no se impacte lo anterior, vamos a realizar un rollback*/
+rollback;
+/*Y UN COMMIT para que no guarde*/
+commit;
