@@ -565,7 +565,7 @@ grant select, insert, update on * to "Modificacion";
 
 
 /*//////////////////////////////////////////////////////////////////////////*/
-/*VAMOS A HACER SUBLENGUAJE DLC*/
+/*VAMOS A HACER SUBLENGUAJE TCL*/
 
 /*TABLA 1*/
 select @@autocommit;
